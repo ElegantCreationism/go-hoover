@@ -16,11 +16,10 @@ func TestRoom_Create_Room_5x5_dimensions(t *testing.T) {
 		{{4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4}},
 	}
 	// act
-	room, err := CreateRoom(dimensions)
+	room := CreateRoom(dimensions)
 
 	// assert
 	fmt.Println(room)
-	assert.Nil(t, err)
 	assert.Equal(t, testRoom, room)
 }
 
@@ -34,10 +33,30 @@ func TestRoom_Create_Room_5x3_dimensions(t *testing.T) {
 		{{4, 0}, {4, 1}, {4, 2}},
 	}
 	// act
-	room, err := CreateRoom(dimensions)
+	room := CreateRoom(dimensions)
 
 	// assert
 	fmt.Println(room)
-	assert.Nil(t, err)
 	assert.Equal(t, testRoom, room)
+}
+
+func TestNavigate(t *testing.T) {
+	// arrange
+	dimensions := Dimensions{5, 5}
+	startPosition := NewCoordinate(2,2)
+	instructions := "N,N,W,S,S,S,W,N"
+	patches := createDirtPatches([]Coordinate{NewCoordinate(0,1), NewCoordinate(3, 1), NewCoordinate(2, 0)})
+
+	expectedEndPosition := NewCoordinate(2, 0)
+
+	// act
+	endPosition, _, err := Navigate(instructions, startPosition, dimensions, patches)
+
+
+	// assert
+	assert.Nil(t, err)
+	//assert.Equal(t, 3, patchesCleaned)
+	assert.Equal(t, expectedEndPosition, endPosition)
+
+
 }
