@@ -17,16 +17,22 @@ deps:
 
 .PHONY: unit_test
 unit_test:
-	go test -v -cover `go list ./... | grep -v tests_system` -count=1
+	GOCHACHE=off go test -v -cover `go list ./... | grep -v tests_system` -count=1
 
 .PHONY: dockerise
 dockerise:
 	docker build -t "moh90poe/go-hoover:${IMAGE_TAG}" .
 
 .PHONY: system_test
-system_test: dockerise
+system_test: dockerise system_test_default
 
-
+.PHONY: system_test_default
+system_test_default:
+	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
+	docker-compose -f docker-composition/default.yml rm --force --stop -v
+	docker-compose -f docker-composition/default.yml up -d --force-recreate --remove-orphans --build
+	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
+	docker-compose -f docker-composition/default.yml rm --force --stop -v
 
 .PHONY: lint
 lint:

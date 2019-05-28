@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"flag"
+	"github.com/ElegantCreationism/go-hoover/env"
 	"github.com/ElegantCreationism/go-hoover/handler"
 	"github.com/gorilla/mux"
 	"log"
@@ -23,41 +24,33 @@ func Start() {
 	http.Handle("/", r)
 
 	srv := &http.Server{
-		Addr: "0.0.0.0:8080",
-		// Good practice to set timeouts to avoid Slowloris attacks.
+		Addr:         env.Settings.Address,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
-		Handler:      r, // Pass our instance of gorilla/mux in.
+		Handler:      r,
 	}
 
-	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			log.Println(err)
+			log.Printf("ERROR STARTING SERVER :%v", err)
 		}
 	}()
 
 	c := make(chan os.Signal, 1)
-	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
-	// SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
-	signal.Notify(c, os.Interrupt)
 
-	// Block until we receive our signal.
+	signal.Notify(c, os.Interrupt)
 	<-c
 
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
-	// Doesn't block if no connections, but will otherwise wait
-	// until the timeout deadline.
+	// Doesn't block if no connections, but will otherwise wait until the timeout deadline.
 	err := srv.Shutdown(ctx)
 	if err != nil {
-		log.Println(err)
+		log.Printf("ERROR SHUTTING DOWN SERVICE: %v", err)
 	}
-	// Optionally, you could run srv.Shutdown in a goroutine and block on
-	// <-ctx.Done() if your application should wait for other services
-	// to finalize based on context cancellation.
+
 	log.Println("shutting down")
 	os.Exit(0)
 

@@ -44,7 +44,7 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 	room := CreateRoom(dimensions)
 	isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 	if !isValidMove {
-		return roombaPosition, patchesCleaned, errors.New("Invalid movement")
+		return roombaPosition, patchesCleaned, errors.New("INVALID INPUT: please enter valid input\ni.e: `N,S,E,W`")
 	}
 
 	s := strings.Split(instructions, ",")
@@ -58,7 +58,7 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 			//Check that you have not moved beyond the bounds of the room
 			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
-				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
+				return roombaPosition, patchesCleaned, errors.New("INVALID INPUT: please enter valid input\ni.e: `N,S,E,W`")
 			}
 
 			// Check if you have landed on a dirt patch and increase the counter
@@ -75,7 +75,7 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 			//Check that you have not moved beyond the bounds of the room
 			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
-				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
+				return roombaPosition, patchesCleaned, errors.New("INVALID INPUT: please enter valid input\ni.e: `N,S,E,W`")
 			}
 
 			// Check if you have landed on a dirt patch and increase the counter
@@ -92,7 +92,7 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 
 			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
-				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
+				return roombaPosition, patchesCleaned, errors.New("INVALID INPUT: please enter valid input\ni.e: `N,S,E,W`")
 			}
 
 			// Check if you have landed on a dirt patch and increase the counter
@@ -109,7 +109,7 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 
 			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
-				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
+				return roombaPosition, patchesCleaned, errors.New("INVALID INPUT: please enter valid input\ni.e: `N,S,E,W`")
 			}
 			// Check if you have landed on a dirt patch and increase the counter
 			for patch := range patches {
@@ -131,7 +131,7 @@ func NewCoordinate(x int, y int) Coordinate {
 	return Coordinate{X: x, Y: y}
 }
 
-func NewDimensions(rows int, columns int) Dimensions {															//nolint
+func NewDimensions(rows int, columns int) Dimensions { //nolint
 	return Dimensions{rows: rows, columns: columns}
 }
 
