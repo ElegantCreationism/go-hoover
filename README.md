@@ -1,10 +1,16 @@
 # go-hoover
 
 ### How to use this service 
-Navigate to the Project root:
-> run:\
-> ``go run main.go``
-
+Navigate to the Project root:\
+Run:
+```
+go run main.go
+```
+Or\
+To run in Docker run:
+```
+make docker_compose_default 
+```
 Then curl the service using this:
 ```bash
 curl --header "Content-Type: application/json" \
@@ -20,6 +26,6 @@ curl --header "Content-Type: application/json" \
 > West:  W
 
 
-```go
-
+```
+"instructions" : "N,N,W,S,S,S,W,N"
 ```

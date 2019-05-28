@@ -7,7 +7,7 @@ import (
 
 type Config struct {
 	Address string
-	Port    int
+	Port    string
 }
 
 var Settings Config
@@ -18,11 +18,11 @@ func init() {
 
 	viper.SetEnvPrefix("ROOMBA")
 	viper.SetDefault("ADDRESS", "0.0.0.0:")
-	viper.SetDefault("PORT", 8080)
+	viper.SetDefault("PORT", "8080")
 
 	Settings = Config{
 		Address: viper.GetString("ADDRESS"),
-		Port:    viper.GetInt("PORT"),
+		Port:    viper.GetString("PORT"),
 	}
 
 }

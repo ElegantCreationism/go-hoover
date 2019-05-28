@@ -1,11 +1,10 @@
 SHELL=/bin/bash
-IMAGE_TAG := $(shell git rev-parse HEAD)
 
 .PHONY: all
-all: deps lint unit_test build system_test
+all: deps lint unit_test build docker_compose docker_compose_teardownm
 
 .PHONY: ci
-ci: lint unit_test system_test
+ci: lint unit_test docker_compose
 
 .PHONY: build
 build:
@@ -21,16 +20,19 @@ unit_test:
 
 .PHONY: dockerise
 dockerise:
-	docker build -t "moh90poe/go-hoover:${IMAGE_TAG}" .
+	docker build -t "moh90poe/go-hoover:latest" .
 
-.PHONY: system_test
-system_test: dockerise system_test_default
+.PHONY: docker_compose
+docker_compose: dockerise docker_compose_default
 
-.PHONY: system_test_default
-system_test_default:
+.PHONY: docker_compose_default
+docker_compose_default:
 	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
 	docker-compose -f docker-composition/default.yml rm --force --stop -v
 	docker-compose -f docker-composition/default.yml up -d --force-recreate --remove-orphans --build
+
+.PHONY: docker_compose_teardown
+docker_compose_teardown:
 	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
 	docker-compose -f docker-composition/default.yml rm --force --stop -v
 

@@ -17,14 +17,14 @@ func Start() {
 	var wait time.Duration
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
-
+	log.Printf(env.Settings.Address + env.Settings.Port)
 	r := mux.NewRouter()
 	r.HandleFunc("/", handler.HomeHandler)
 	r.HandleFunc("/roomba", handler.RoombaHandler)
 	http.Handle("/", r)
 
 	srv := &http.Server{
-		Addr:         env.Settings.Address,
+		Addr:         env.Settings.Address + env.Settings.Port,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
@@ -42,10 +42,8 @@ func Start() {
 	signal.Notify(c, os.Interrupt)
 	<-c
 
-	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
-	// Doesn't block if no connections, but will otherwise wait until the timeout deadline.
 	err := srv.Shutdown(ctx)
 	if err != nil {
 		log.Printf("ERROR SHUTTING DOWN SERVICE: %v", err)
