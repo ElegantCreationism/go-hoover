@@ -1,24 +1,24 @@
 package roomba
 
-type roombaRequestBody struct {
+type RequestBody struct {
 	RoomSize     []int   `json:"roomSize"`
 	StartCoords  []int   `json:"coords"`
 	Patches      [][]int `json:"patches"`
 	Instructions string  `json:"instructions"`
 }
 
-type roombaResponseBody struct {
+type ResponseBody struct {
 	EndCoords []int `json:"coords"`
 	Patches   int   `json:"patches"`
 }
 
-func NewResponseBody(endCoords []int, patches int) roombaResponseBody {
-	return roombaResponseBody{
+func NewResponseBody(endCoords []int, patches int) ResponseBody {
+	return ResponseBody{
 		EndCoords: endCoords,
 		Patches:   patches,
 	}
 }
 
-func NewRequestBody() roombaRequestBody {
-	return roombaRequestBody{}
+func NewRequestBody() RequestBody {
+	return RequestBody{}
 }

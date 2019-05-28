@@ -43,20 +43,26 @@ func TestRoom_Create_Room_5x3_dimensions(t *testing.T) {
 func TestNavigate(t *testing.T) {
 	// arrange
 	dimensions := Dimensions{5, 5}
-	startPosition := NewCoordinate(2,2)
+	startPosition := NewCoordinate(2, 2)
 	instructions := "N,N,W,S,S,S,W,N"
-	patches := createDirtPatches([]Coordinate{NewCoordinate(0,1), NewCoordinate(3, 1), NewCoordinate(2, 0)})
+	patches := createDirtPatches([]Coordinate{NewCoordinate(0, 1), NewCoordinate(3, 1), NewCoordinate(2, 0)})
 
 	expectedEndPosition := NewCoordinate(2, 0)
 
 	// act
 	endPosition, _, err := Navigate(instructions, startPosition, dimensions, patches)
 
-
 	// assert
 	assert.Nil(t, err)
 	//assert.Equal(t, 3, patchesCleaned)
 	assert.Equal(t, expectedEndPosition, endPosition)
 
+}
 
+func createDirtPatches(coordinates []Coordinate) Patches {
+	patches := make(Patches, len(coordinates))
+	for coord := range coordinates {
+		patches = append(patches, coordinates[coord])
+	}
+	return patches
 }

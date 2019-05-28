@@ -15,47 +15,17 @@ build:
 deps:
 	go mod vendor
 
-.PHONY: gen
-gen:
-
-
 .PHONY: unit_test
-unit_test: gen
-	go test -v -cover `go list ./... | grep -v tests_system`
+unit_test:
+	go test -v -cover `go list ./... | grep -v tests_system` -count=1
 
 .PHONY: dockerise
 dockerise:
-	docker build -t "quay.io/90poe/external-data-gateway:${IMAGE_TAG}" .
+	docker build -t "moh90poe/go-hoover:${IMAGE_TAG}" .
 
 .PHONY: system_test
-system_test: dockerise system_test_default healthcheck_tests
+system_test: dockerise
 
-.PHONY: system_test
-system_test_default:
-	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
-	docker-compose -f docker-composition/default.yml rm --force --stop -v
-	IMAGE_TAG=${IMAGE_TAG} \
-	docker-compose \
-		-f docker-composition/default.yml \
-		-f docker-composition/system-test-mask.yml \
-		up -d --force-recreate --remove-orphans --build
-	sleep 5
-	go test -v -tags=system_tests ./tests_system/...
-	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
-	docker-compose -f docker-composition/default.yml rm --force --stop -v
-
-.PHONY: healthcheck_tests
-healthcheck_tests:
-	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
-	docker-compose -f docker-composition/default.yml rm --force --stop -v
-	IMAGE_TAG=${IMAGE_TAG} \
-	docker-compose \
-		-f docker-composition/default.yml \
-		-f docker-composition/system-test-mask.yml \
-		up -d --force-recreate --remove-orphans --build
-	sleep 5
-	docker-compose -f docker-composition/default.yml down --volumes --remove-orphans
-	docker-compose -f docker-composition/default.yml rm --force --stop -v
 
 
 .PHONY: lint

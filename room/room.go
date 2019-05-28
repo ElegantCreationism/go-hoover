@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-var (
-	RoombaPosition Coordinate
-)
-
 type Coordinate struct {
 	X int
 	Y int
@@ -22,7 +18,7 @@ type Dimensions struct {
 
 type Patches []Coordinate
 
-func CreateRoom(dimensions Dimensions) [][]Coordinate{
+func CreateRoom(dimensions Dimensions) [][]Coordinate {
 	var room = make([][]Coordinate, dimensions.rows)
 	for i := range room {
 		room[i] = make([]Coordinate, dimensions.columns)
@@ -38,37 +34,36 @@ func CreateRoom(dimensions Dimensions) [][]Coordinate{
 	return room
 }
 
-func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensions, patches Patches) (Coordinate, int, error) {
+func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensions, patches Patches) (Coordinate, int, error) { //nolint
 	var patchesCleaned int
-	Patches := patches
 	isValidInput := strings.Contains(instructions, ",")
 	if !isValidInput {
 		return roombaPosition, patchesCleaned, errors.New("Invalid Input: Please use comma separated values:\ni.e: `N,S,E,W`")
 	}
 
-	room:= CreateRoom(dimensions)
-	isValidMove := checkIsValidMove(dimensions, room)
+	room := CreateRoom(dimensions)
+	isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 	if !isValidMove {
 		return roombaPosition, patchesCleaned, errors.New("Invalid movement")
 	}
 
 	s := strings.Split(instructions, ",")
 	for i := range s {
-		switch true {
+		switch {
 		//North
 		case "N" == s[i]:
 			//Go up
 			roombaPosition = goNorth(roombaPosition)
 
 			//Check that you have not moved beyond the bounds of the room
-			isValidMove := checkIsValidMove(dimensions, room)
+			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
 				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
 			}
 
 			// Check if you have landed on a dirt patch and increase the counter
-			for patch := range Patches{
-				if roombaPosition == Patches[patch]{
+			for patch := range patches {
+				if roombaPosition == patches[patch] {
 					patchesCleaned++
 				}
 			}
@@ -78,14 +73,14 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 			roombaPosition = goEast(roombaPosition)
 
 			//Check that you have not moved beyond the bounds of the room
-			isValidMove := checkIsValidMove(dimensions, room)
+			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
 				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
 			}
 
 			// Check if you have landed on a dirt patch and increase the counter
-			for patch := range Patches {
-				if roombaPosition == Patches[patch]{
+			for patch := range patches {
+				if roombaPosition == patches[patch] {
 					patchesCleaned++
 				}
 			}
@@ -95,14 +90,14 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 			// Go left
 			roombaPosition = goSouth(roombaPosition)
 
-			isValidMove := checkIsValidMove(dimensions, room)
+			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
 				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
 			}
 
 			// Check if you have landed on a dirt patch and increase the counter
-			for patch := range Patches{
-				if roombaPosition == Patches[patch]{
+			for patch := range patches {
+				if roombaPosition == patches[patch] {
 					patchesCleaned++
 				}
 			}
@@ -112,13 +107,13 @@ func Navigate(instructions string, roombaPosition Coordinate, dimensions Dimensi
 			//Go West
 			roombaPosition = goWest(roombaPosition)
 
-			isValidMove := checkIsValidMove(dimensions, room)
+			isValidMove := checkIsValidMove(dimensions, room, roombaPosition)
 			if !isValidMove {
 				return roombaPosition, patchesCleaned, errors.New("Invalid movement")
 			}
 			// Check if you have landed on a dirt patch and increase the counter
-			for patch := range Patches{
-				if roombaPosition == Patches[patch]{
+			for patch := range patches {
+				if roombaPosition == patches[patch] {
 					patchesCleaned++
 				}
 			}
@@ -136,39 +131,31 @@ func NewCoordinate(x int, y int) Coordinate {
 	return Coordinate{X: x, Y: y}
 }
 
-func NewDimensions(rows int, columns int) Dimensions {
+func NewDimensions(rows int, columns int) Dimensions {															//nolint
 	return Dimensions{rows: rows, columns: columns}
 }
 
-func createDirtPatches(coordinates []Coordinate) Patches {
-	patches := make(Patches, len(coordinates))
-	for  coord := range coordinates {
-		patches = append(patches, coordinates[coord])
-	}
-	return patches
-}
-
-func goNorth(coordinate Coordinate) Coordinate{
+func goNorth(coordinate Coordinate) Coordinate {
 	return Coordinate{coordinate.X - 1, coordinate.Y}
 }
 
-func goEast(coordinate Coordinate) Coordinate{
+func goEast(coordinate Coordinate) Coordinate {
 	return Coordinate{coordinate.X, coordinate.Y + 1}
 }
 
-func goSouth(coordinate Coordinate) Coordinate{
+func goSouth(coordinate Coordinate) Coordinate {
 	return Coordinate{coordinate.X + 1, coordinate.Y}
 }
 
-func goWest(coordinate Coordinate) Coordinate{
+func goWest(coordinate Coordinate) Coordinate {
 	return Coordinate{coordinate.X, coordinate.Y - 1}
 }
 
-func checkIsValidMove(dimensions Dimensions, room [][]Coordinate) bool {
+func checkIsValidMove(dimensions Dimensions, room [][]Coordinate, roombaPosition Coordinate) bool {
 	var validMove bool
 	for i := 0; i < dimensions.rows; i++ {
 		for j := 0; j < dimensions.columns; j++ {
-			if RoombaPosition == room[i][j]{
+			if roombaPosition == room[i][j] {
 				validMove = true
 				break
 			}

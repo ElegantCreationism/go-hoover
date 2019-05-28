@@ -31,15 +31,18 @@ func RoombaHandler(w http.ResponseWriter, r *http.Request) {
 	startCoords := room.NewCoordinate(roombaRequest.StartCoords[0], roombaRequest.StartCoords[1])
 	dimensions := room.NewDimensions(roombaRequest.RoomSize[0], roombaRequest.RoomSize[1])
 	patches := make(room.Patches, len(roombaRequest.Patches))
-	for i := 0 ; i < 1; i++ {
-		for j := 0 ; j < len(roombaRequest.Patches); j++ {
-			x := room.NewCoordinate(roombaRequest.Patches[0][i],roombaRequest.Patches[0][i+1])
+	for i := 0; i < 1; i++ {
+		for j := 0; j < len(roombaRequest.Patches); j++ {
+			x := room.NewCoordinate(roombaRequest.Patches[0][i], roombaRequest.Patches[0][i+1])
 			patches = append(patches, x)
 		}
 		//patches = append(patches, room.NewCoordinate(roombaRequest.Patches[0][i], roombaRequest.Patches[0][i+1]))
 	}
 
 	endpoint, dirtPatches, err := room.Navigate(instructions, startCoords, dimensions, patches)
+	if err != nil {
+		log.Fatal(err)
+	}
 	endpointArray := []int{endpoint.X, endpoint.Y}
 
 	roombaResponse := roomba.NewResponseBody(endpointArray, dirtPatches)
