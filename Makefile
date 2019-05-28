@@ -1,7 +1,7 @@
 SHELL=/bin/bash
 
 .PHONY: all
-all: deps lint unit_test build docker_compose docker_compose_teardownm
+all: deps lint unit_test build docker_compose docker_compose_teardown
 
 .PHONY: ci
 ci: lint unit_test docker_compose
